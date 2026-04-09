@@ -1,0 +1,64 @@
+/* 基础 */
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --primary:#2b6cb0;
+  --accent:#1f9d55;
+  --glass: rgba(255,255,255,0.7);
+}
+body{font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial; background:var(--bg); margin:0;color:#0f172a}
+.app-header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:linear-gradient(90deg,#ffffffcc,var(--glass));box-shadow:0 2px 6px rgba(15,23,42,0.06)}
+.brand{font-weight:700;color:var(--primary);font-size:18px}
+.user-area{display:flex;align-items:center;gap:8px}
+.btn{border:0;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-primary{background:linear-gradient(180deg,var(--primary),#234f86);color:#fff}
+.btn-ghost{background:transparent;border:1px solid rgba(13, 24, 39, 0.06)}
+
+.container{display:flex;gap:24px;padding:24px;align-items:flex-start}
+.card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+.sidebar{width:320px}
+.map-area{flex:1;display:flex;align-items:center;justify-content:center}
+
+/* 详情与搜索 */
+#details{min-height:120px;padding:12px;border-radius:8px;background:linear-gradient(180deg,#fbfdff,#ffffff);border:1px solid #eef2f7;color:#0f172a}
+.search input{width:100%;padding:8px;margin-top:8px;border-radius:8px;border:1px solid #e6eef8}
+#searchResults{margin-top:8px}
+#searchResults div{padding:6px;border-radius:6px;margin-bottom:6px;background:#fbfdff;border:1px solid #eef6ff;cursor:pointer}
+#searchResults div:hover{background:#eef8ff}
+
+/* SVG 房间样式 */
+svg{width:100%;height:auto}
+.room-label{font-size:14px;fill:#0f172a}
+svg rect{transition:all 0.18s ease;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.04))}
+svg rect:hover{transform:translateY(-4px);filter:drop-shadow(0 8px 18px rgba(11,70,150,0.12))}
+svg rect.selected{stroke-width:3px;transform:scale(1.03);filter:drop-shadow(0 12px 26px rgba(34,78,150,0.18));}
+
+/* 移除红色指向线：不添加任何 route-line 样式，改为选中高亮 */
+
+/* 模态 */
+.modal{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(9,30,66,0.45);}
+.modal-content{width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 20px 40px rgba(2,6,23,0.2)}
+.modal-content h2{margin-top:0}
+.modal-content label{display:block;margin-top:10px;font-size:14px;color:var(--muted)}
+.modal-content input{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;margin-top:6px}
+.modal-actions{display:flex;justify-content:flex-end;margin-top:14px}
+
+/* 页脚 */
+.app-footer{text-align:center;padding:12px;color:var(--muted);font-size:13px}
+
+/* 校园控件 */
+.campus-controls{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.campus-controls select{padding:8px;border-radius:8px;border:1px solid #e6eef8}
+.campus-controls #roomList{max-height:160px;overflow:auto;padding:8px;border-radius:8px;border:1px solid #f0f6ff;background:#fbfdff}
+.campus-controls .room-item{padding:6px;border-radius:6px;margin-bottom:6px;background:#fff;border:1px solid #eef6ff;cursor:pointer}
+.campus-controls .room-item:hover{background:#eef8ff}
+
+/* small helper for screen readers */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+/* 响应 */
+@media (max-width:900px){
+  .container{flex-direction:column}
+  .sidebar{width:100%}
+}

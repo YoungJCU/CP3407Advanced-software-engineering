@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Campus Navigator — JCU Singapore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .campus-top{max-width:1100px;margin:16px auto;padding:12px;background:#fff;border-radius:10px;border:1px solid #eef2f7}
+    .campus-image-wrap{position:relative}
+    .campus-image{width:100%;height:auto;border-radius:8px;display:block}
+    .campus-overlay{position:absolute;left:0;top:0;pointer-events:auto;z-index:5;box-sizing:border-box}
+    .building-hotspot{background:rgba(248,250,252,0.94);border:1px solid #94a3b8;padding:10px 14px;border-radius:999px;cursor:pointer;z-index:6;min-width:88px;min-height:48px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-size:13px;font-weight:600;color:#0f172a;box-shadow:0 2px 8px rgba(15,23,42,0.12);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    .building-hotspot.selected{box-shadow:0 4px 14px rgba(37,99,235,0.22);border-color:#2563eb;background:rgba(224,242,254,0.96)}
+    .room-item{display:block;margin:6px 0;padding:6px;border-radius:6px;background:#f8fafc;border:1px solid #e6eef7;cursor:pointer}
+    .room-item:hover{background:#eef6ff}
+    .selected-room{outline:2px solid #2563eb;background:#e0f2ff}
+    .login-status{margin-left:auto;color:#374151;font-size:14px}
+    @keyframes level-room-flash{0%{box-shadow:0 0 0 0 rgba(37,99,235,0.35)}100%{box-shadow:0 0 0 12px rgba(37,99,235,0)}}
+    #levelRoomPanel.level-room-navflash{animation:level-room-flash 0.65s ease-out 1}
+    .search-panel{background:#fff;border-radius:10px;border:1px solid #eef2f7;padding:14px 16px;margin-bottom:14px}
+    .search-panel label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:#0f172a}
+    .search-panel input[type="search"]{width:100%;max-width:560px;box-sizing:border-box;padding:10px 14px;border-radius:8px;border:1px solid #e2e8f0;font-size:15px}
+    .search-hint{font-size:13px;color:#64748b;margin-top:8px}
+    #searchResults{margin-top:12px}
+    .search-hit{padding:12px 14px;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;margin-bottom:8px;cursor:pointer;text-align:left;width:100%;font:inherit}
+    .search-hit:hover{background:#eff6ff;border-color:#bfdbfe}
+    .search-hit strong{display:block;color:#0f172a;margin-bottom:4px}
+    .search-hit .meta{font-size:13px;color:#64748b}
+    .search-hit .preview{font-size:12px;color:#475569;margin-top:6px}
+    .search-empty{font-size:14px;color:#64748b;padding:8px 0}
+  </style>
+</head>
+<body>
+  <header class="app-header" style="display:flex;align-items:center;padding:12px 20px;gap:16px;flex-wrap:wrap">
+    <div class="brand">Campus Navigator</div>
+    <div class="login-status" id="loginStatus"><a href="login.html">Sign in</a></div>
+  </header>
+
+  <main style="padding:12px;max-width:1200px;margin:0 auto 24px">
+    <div class="search-panel">
+      <label for="campusSearch">Search</label>
+      <input type="search" id="campusSearch" placeholder="Room, floor, module code, title, day, time…" autocomplete="off" />
+      <p class="search-hint" id="searchHint">Rooms, floors, module codes, titles, session types, days, times, and term.</p>
+      <div id="searchResults" role="region" aria-live="polite"></div>
+    </div>
+
+    <section class="campus-top">
+      <h2 style="margin-top:0">Campus overview</h2>
+      <p style="margin:0 0 10px;color:#64748b;font-size:14px">Select a block on the map, then choose a room for timetable and seating.</p>
+      <div class="campus-image-wrap">
+        <img id="campusImg" class="campus-image" src="images/campus.png" alt="Campus map">
+        <div id="campusOverlay" class="campus-overlay"></div>
+      </div>
+    </section>
+
+    <section id="levelRoomPanel" tabindex="-1" aria-label="Floors and rooms" style="margin-top:16px;background:#fff;border-radius:10px;border:1px solid #eef2f7;padding:12px;scroll-margin-top:24px;outline:none">
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <aside class="sidebar card" style="width:320px;min-width:280px;flex:1;padding:12px" id="sidebar">
+          <h3>Room details</h3>
+          <div id="details">Choose a block on the map, then select a room.</div>
+
+          <div id="campusControls" class="campus-controls" style="margin-top:12px">
+            <label for="levelSelect">Floor</label>
+            <select id="levelSelect"></select>
+
+            <label for="buildingSelect" style="margin-top:8px">Building</label>
+            <select id="buildingSelect"></select>
+
+            <div id="roomList" style="margin-top:8px"></div>
+          </div>
+        </aside>
+
+        <div style="flex:1;min-width:280px">
+          <section class="map-area card" style="padding:12px;">
+            <svg id="campusMap" width="900" height="600" viewBox="0 0 900 600" aria-label="Floor plan"></svg>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div>© 2026 Campus Navigator</div>
+    <div style="margin-top:6px;font-size:12px"><a href="https://www.jcu.edu.sg/current-students/calendars-and-timetables" target="_blank" rel="noopener">JCU Singapore — Calendars &amp; timetables</a></div>
+  </footer>
+
+  <script>window.BACKEND_BASE = '';</script>
+  <script src="js/api_enhanced.js"></script>
+  <script src="js/index_main.js"></script>
+</body>
+</html>

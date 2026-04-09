@@ -1,0 +1,16 @@
+{
+  "blocks": [
+    { "id": "BlockA", "label": "Block A", "left_pct": 20, "top_pct": 25, "levelId": "level-2" },
+    { "id": "BlockB", "label": "Block B", "left_pct": 45, "top_pct": 25, "levelId": "level-2" },
+    { "id": "BlockC", "label": "Block C", "left_pct": 70, "top_pct": 25, "levelId": "level-3" },
+    { "id": "BlockD", "label": "Block D", "left_pct": 30, "top_pct": 60, "levelId": "level-4" },
+    { "id": "BlockE", "label": "Block E", "left_pct": 60, "top_pct": 60, "levelId": "level-5" },
+    { "id": "BlockF", "label": "Block F", "left_pct": 82, "top_pct": 42, "levelId": "level-1" },
+    { "id": "B2", "label": "B2", "left_pct": 10, "top_pct": 80, "levelId": "level-2" },
+    { "id": "B3", "label": "B3", "left_pct": 30, "top_pct": 80, "levelId": "level-3" },
+    { "id": "B4", "label": "B4", "left_pct": 50, "top_pct": 80, "levelId": "level-4" },
+    { "id": "B5", "label": "B5", "left_pct": 70, "top_pct": 80, "levelId": "level-5" },
+    { "id": "B6", "label": "B6", "left_pct": 90, "top_pct": 80, "levelId": "level-5" }
+  ]
+}
+
