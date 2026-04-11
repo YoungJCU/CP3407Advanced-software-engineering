@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Campus overview — JCU Singapore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .campus-top{max-width:1100px;margin:16px auto;padding:12px;background:#fff;border-radius:10px;border:1px solid #eef2f7}
+    .campus-image-wrap{position:relative;line-height:0}
+    /* SVG 校园总览：底图仍用 images/campus.png，热点为同坐标系内的矢量图形 */
+    .campus-overview-svg{width:100%;max-width:100%;height:auto;display:block;border-radius:8px;vertical-align:top;background:#e8eef5}
+    .campus-raster{pointer-events:none}
+    .campus-block-layer{pointer-events:auto}
+    .campus-block-hotspot{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+    .campus-block-hotspot .campus-block-shape{fill:rgba(248,250,252,0.82);stroke:#64748b;transition:fill .18s ease,stroke .18s ease,filter .18s ease;filter:drop-shadow(0 1px 4px rgba(15,23,42,0.1))}
+    .campus-block-hotspot .campus-block-label{fill:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;pointer-events:none;paint-order:stroke fill;stroke:rgba(255,255,255,0.92);stroke-width:2.5px;vector-effect:non-scaling-stroke}
+    .campus-block-hotspot .campus-block-hit{pointer-events:none;fill:none;stroke:rgba(37,99,235,0);stroke-width:3;vector-effect:non-scaling-stroke;transition:stroke .15s ease,stroke-dashoffset .15s ease}
+    .campus-block-hotspot:hover .campus-block-hit{stroke:rgba(37,99,235,0.55);stroke-dasharray:5 4}
+    .campus-block-hotspot:hover .campus-block-shape{filter:drop-shadow(0 4px 12px rgba(15,23,42,0.14));stroke:#3b82f6;stroke-width:2.2}
+    .campus-block-hotspot.selected .campus-block-shape{fill:rgba(224,242,254,0.96);stroke:#2563eb;filter:drop-shadow(0 4px 14px rgba(37,99,235,0.22))}
+    .campus-block-hotspot:focus{outline:none}
+    .campus-block-hotspot:focus .campus-block-shape{stroke:#2563eb}
+    .campus-route-layer,.campus-gate-layer{pointer-events:none}
+    /* 导航：橙红细虚线，画在楼块之上；线本身不拦截点击 */
+    .campus-route-line{pointer-events:none;fill:none;stroke:#ea580c;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 5;opacity:0.95;vector-effect:non-scaling-stroke}
+    .campus-gate-marker .campus-gate-shape{fill:rgba(236,253,245,0.82);stroke:#047857;stroke-width:1.5;filter:drop-shadow(0 1px 4px rgba(5,150,105,0.15))}
+    .campus-gate-marker .campus-gate-label{fill:#064e3b;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;font-weight:700;pointer-events:none;paint-order:stroke fill;stroke:rgba(255,255,255,0.9);stroke-width:2.5px;vector-effect:non-scaling-stroke}
+    .campus-roads-layer{pointer-events:none}
+    /* 道路：蓝色粗实线，在楼块之上、导航之下，不拦截点击 */
+    .campus-road-line{pointer-events:none;fill:none;stroke:#1d4ed8;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;opacity:0.88;vector-effect:non-scaling-stroke}
+    .room-item{display:block;margin:6px 0;padding:6px;border-radius:6px;background:#f8fafc;border:1px solid #e6eef7;cursor:pointer}
+    .room-item:hover{background:#eef6ff}
+    .selected-room{outline:2px solid #2563eb;background:#e0f2ff}
+    .login-status{margin-left:auto;color:#374151;font-size:14px}
+    @keyframes level-room-flash{0%{box-shadow:0 0 0 0 rgba(37,99,235,0.35)}100%{box-shadow:0 0 0 12px rgba(37,99,235,0)}}
+    #levelRoomPanel.level-room-navflash{animation:level-room-flash 0.65s ease-out 1}
+    .search-panel{background:#fff;border-radius:10px;border:1px solid #eef2f7;padding:14px 16px;margin-bottom:14px}
+    .search-panel label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:#0f172a}
+    .search-panel input[type="search"]{width:100%;max-width:560px;box-sizing:border-box;padding:10px 14px;border-radius:8px;border:1px solid #e2e8f0;font-size:15px}
+    .search-hint{font-size:13px;color:#64748b;margin-top:8px}
+    #searchResults{margin-top:12px}
+    .search-hit{padding:12px 14px;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;margin-bottom:8px;cursor:pointer;text-align:left;width:100%;font:inherit}
+    .search-hit:hover{background:#eff6ff;border-color:#bfdbfe}
+    .search-hit strong{display:block;color:#0f172a;margin-bottom:4px}
+    .search-hit .meta{font-size:13px;color:#64748b}
+    .search-hit .preview{font-size:12px;color:#475569;margin-top:6px}
+    .search-empty{font-size:14px;color:#64748b;padding:8px 0}
+  </style>
+</head>
+<body>
+  <header class="app-header" style="display:flex;align-items:center;padding:12px 20px;gap:16px;flex-wrap:wrap">
+    <div class="brand">Campus overview</div>
+    <nav style="display:flex;align-items:center;gap:12px;font-size:14px">
+      <a href="map_editor.html" style="color:var(--primary);font-weight:600">Map editor</a>
+    </nav>
+    <div class="login-status" id="loginStatus"><a href="login.html">Sign in</a></div>
+  </header>
+
+  <main style="padding:12px;max-width:1200px;margin:0 auto 24px">
+    <div class="search-panel">
+      <label for="campusSearch">Search</label>
+      <input type="search" id="campusSearch" placeholder="Room, floor, module code, title, day, time…" autocomplete="off" />
+      <p class="search-hint" id="searchHint">Rooms, floors, module codes, titles, session types, days, times, and term.</p>
+      <div id="searchResults" role="region" aria-live="polite"></div>
+    </div>
+
+    <section class="campus-top">
+      <h2 style="margin-top:0">Campus overview</h2>
+      <p id="campusOverviewIntro" class="campus-overview-intro" style="margin:0 0 10px;color:#64748b;font-size:14px;line-height:1.55"></p>
+      <div class="campus-image-wrap">
+        <svg id="campusOverviewSvg" class="campus-overview-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Campus map — Gate and building blocks">
+          <title>Campus map</title>
+          <defs>
+            <marker id="campusRouteArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#ea580c"/>
+            </marker>
+          </defs>
+          <image id="campusRaster" class="campus-raster" href="images/campus.png" xlink:href="images/campus.png" x="0" y="0" width="1000" height="600" preserveAspectRatio="xMidYMid meet"></image>
+          <g id="campusGateLayer" class="campus-gate-layer"></g>
+          <g id="campusBlockLayer" class="campus-block-layer"></g>
+          <g id="campusRoadsLayer" class="campus-roads-layer" aria-hidden="true"></g>
+          <g id="campusRouteLayer" class="campus-route-layer" aria-hidden="true"></g>
+        </svg>
+      </div>
+    </section>
+
+    <section id="levelRoomPanel" tabindex="-1" aria-label="Floors and rooms" style="margin-top:16px;background:#fff;border-radius:10px;border:1px solid #eef2f7;padding:12px;scroll-margin-top:24px;outline:none">
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <aside class="sidebar card" style="width:320px;min-width:280px;flex:1;padding:12px" id="sidebar">
+          <h3>Room details</h3>
+          <div id="details">Choose a block on the map, then select a room.</div>
+
+          <div id="campusControls" class="campus-controls" style="margin-top:12px">
+            <label for="levelSelect">Floor</label>
+            <select id="levelSelect"></select>
+
+            <label for="buildingSelect" style="margin-top:8px">Building</label>
+            <select id="buildingSelect"></select>
+
+            <div id="roomList" style="margin-top:8px"></div>
+          </div>
+        </aside>
+
+        <div style="flex:1;min-width:280px">
+          <section class="map-area card" style="padding:12px;">
+            <svg id="campusMap" width="900" height="600" viewBox="0 0 900 600" aria-label="Floor plan"></svg>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div>© 2026 Campus overview</div>
+    <div style="margin-top:6px;font-size:12px"><a href="https://www.jcu.edu.sg/current-students/calendars-and-timetables" target="_blank" rel="noopener">JCU Singapore — Calendars &amp; timetables</a></div>
+  </footer>
+
+  <script>window.BACKEND_BASE = '';</script>
+  <script src="js/api_enhanced.js"></script>
+  <script src="js/index_main.js"></script>
+</body>
+</html>

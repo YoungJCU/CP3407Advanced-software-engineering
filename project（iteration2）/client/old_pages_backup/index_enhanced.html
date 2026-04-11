@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Campus Navigation - Enhanced</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">学校园导航（增强版）</div>
+  </header>
+  <div id="loadStatus" style="padding:8px 20px;font-size:13px;color:#374151;background:linear-gradient(90deg,#ffffff00,#ffffff00)"></div>
+
+  <main class="app-content" id="appContent">
+    <div class="container">
+      <aside class="sidebar card">
+        <h3>房间信息</h3>
+        <div id="details">点击地图中的教室以查看详细信息。</div>
+
+        <div id="campusControls" class="campus-controls">
+          <label for="levelSelect">楼层</label>
+          <select id="levelSelect"></select>
+
+          <label for="buildingSelect" style="margin-top:8px">建筑</label>
+          <select id="buildingSelect"></select>
+
+          <div id="roomList" style="margin-top:8px"></div>
+        </div>
+      </aside>
+
+      <section class="map-area card">
+        <svg id="campusMap" width="720" height="480" viewBox="0 0 720 480"></svg>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">© 2026 校园导航示例</footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/map2.js"></script>
+</body>
+</html>

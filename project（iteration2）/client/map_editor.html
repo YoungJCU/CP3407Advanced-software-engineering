@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Map editor — Campus overview</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { margin: 0; background: #f4f7fb; color: #0f172a; }
+    .me-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e2e8f0; }
+    .me-top a { color: #2b6cb0; font-weight: 600; }
+    .me-wrap { display: flex; flex-wrap: wrap; gap: 16px; max-width: 1400px; margin: 0 auto; padding: 16px; align-items: flex-start; }
+    .me-panel { flex: 1 1 380px; min-width: 320px; background: #fff; border-radius: 10px; border: 1px solid #eef2f7; padding: 14px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.06); }
+    .me-panel h2 { margin: 0 0 10px; font-size: 16px; }
+    .me-map-wrap { flex: 2 1 520px; min-width: 280px; background: #fff; border-radius: 10px; border: 1px solid #eef2f7; padding: 12px; line-height: 0; }
+    .me-svg { width: 100%; height: auto; display: block; border-radius: 8px; background: #e8eef5; }
+    #editorRoadsLayer, #editorRoutePreview, #editorMarkers { pointer-events: none; }
+    #editorHitRect { pointer-events: all; cursor: crosshair; }
+    .ed-pill-g .ed-pill-shape { fill: rgba(236,253,245,0.95); stroke: #059669; stroke-width: 2; filter: drop-shadow(0 2px 8px rgba(5,150,105,0.2)); transition: stroke .15s ease, stroke-width .15s ease; }
+    .ed-pill-g .ed-pill-text { fill: #064e3b; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-weight: 700; pointer-events: none; }
+    .ed-pill-b .ed-pill-shape { fill: rgba(248,250,252,0.94); stroke: #94a3b8; stroke-width: 2; filter: drop-shadow(0 2px 8px rgba(15,23,42,0.12)); transition: stroke .15s ease, stroke-width .15s ease; }
+    .ed-pill-g:hover .ed-pill-shape, .ed-pill-b:hover .ed-pill-shape { stroke: #2563eb; stroke-width: 2.8; stroke-dasharray: 5 4; }
+    .ed-pill-b .ed-pill-text { fill: #0f172a; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-weight: 600; pointer-events: none; }
+    .me-status { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; margin-bottom: 12px; }
+    .me-status.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+    .me-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .me-row label { font-size: 12px; color: #64748b; display: block; margin-bottom: 2px; }
+    .me-row input, .me-row select { width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 14px; }
+    .me-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .me-btns button, .me-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 13px; }
+    .me-btns button.primary, .me-btn.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .me-btns button.danger { color: #b91c1c; border-color: #fecaca; }
+    .me-block-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #fafbfc; }
+    .me-block-card h3 { margin: 0 0 8px; font-size: 14px; }
+    .me-small { font-size: 12px; color: #64748b; margin: 6px 0; }
+    .me-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; background: #e0e7ff; color: #3730a3; margin-right: 6px; }
+    .me-log { font-size: 12px; color: #64748b; margin-top: 10px; white-space: pre-wrap; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <header class="me-top">
+    <div>
+      <strong>Campus map editor</strong>
+      <span style="color:#64748b;font-size:13px;margin-left:8px">编辑 Gate、楼块、导航折线、道路（保存到 <code>data/block_map.json</code>）</span>
+    </div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="index.html">← 返回导航主页</a>
+    </div>
+  </header>
+
+  <div class="me-wrap">
+    <div class="me-panel">
+      <h2>操作说明</h2>
+      <p class="me-small">1. 必须用 <strong>http://localhost:3001/map_editor.html</strong> 打开（本仓库 Node 服务）。用 test web 的 3000 或本地文件打开会导致 <strong>保存 404</strong>。<br>2. 点击地图用底图 <code>&lt;image&gt;</code> 换算坐标，支持浏览器缩放。<br>3. 主页地图上方的说明、楼块/Gate 的 <strong>大小 / 透明度 / 形状</strong> 在下方表单编辑；预览区悬停可看到虚线描边（与主页可点击区域提示类似）。<br>4. 道路可多段：<strong>新分段</strong>=分叉；路口让两段共用同一坐标点即可衔接。<br>5. 改完点「保存到服务器」写入 <code>data/block_map.json</code>。</p>
+      <div id="pickStatus" class="me-status">当前：未选择放置模式（先选模式再点地图）</div>
+      <div class="me-btns" style="margin-bottom:12px">
+        <button type="button" class="me-btn" id="pickGate">放置 Gate</button>
+        <button type="button" class="me-btn" id="pickIdle">取消放置</button>
+      </div>
+
+      <h2>主页介绍（Campus overview）</h2>
+      <p class="me-small">显示在导航页地图标题下的说明。纯文本，换行＝新行（无 HTML，防注入）。保存后刷新主页生效。</p>
+      <label for="overviewIntro" style="font-size:12px;color:#64748b">Overview 介绍</label>
+      <textarea id="overviewIntro" rows="4" style="width:100%;box-sizing:border-box;margin:6px 0 14px;padding:8px;border-radius:8px;border:1px solid #e2e8f0;font-size:14px;font-family:inherit;line-height:1.45"></textarea>
+
+      <h2>默认楼块样式</h2>
+      <p class="me-small">全体楼块的默认大小、透明度、形状；单个楼块可在下方「样式覆盖」里改。</p>
+      <div class="me-row">
+        <div><label>大小 scale</label><input type="number" id="blkDefSize" step="0.05" min="0.35" max="2.5" /></div>
+        <div><label>填充透明度 fill</label><input type="number" id="blkDefFillOp" step="0.05" min="0.12" max="1" /></div>
+      </div>
+      <div class="me-row">
+        <div><label>文字透明度 label</label><input type="number" id="blkDefLblOp" step="0.05" min="0.15" max="1" /></div>
+        <div><label>形状 shape</label><select id="blkDefShape"><option value="pill">pill 胶囊</option><option value="rect">rect 方角</option><option value="circle">circle 圆</option></select></div>
+      </div>
+
+      <h2 style="margin-top:14px">Gate 样式</h2>
+      <div class="me-row">
+        <div><label>大小 scale</label><input type="number" id="gateStSize" step="0.05" min="0.35" max="2.5" /></div>
+        <div><label>填充透明度</label><input type="number" id="gateStFillOp" step="0.05" min="0.12" max="1" /></div>
+      </div>
+      <div class="me-row">
+        <div><label>文字透明度</label><input type="number" id="gateStLblOp" step="0.05" min="0.15" max="1" /></div>
+        <div><label>形状 shape</label><select id="gateStShape"><option value="pill">pill</option><option value="rect">rect</option><option value="circle">circle</option></select></div>
+      </div>
+
+      <h2>Gate</h2>
+      <div class="me-row">
+        <div><label>标签</label><input type="text" id="gateLabel" /></div>
+        <div><label>left % / top %</label><input type="text" id="gatePos" readonly placeholder="点击地图或手填" /></div>
+      </div>
+      <div class="me-row">
+        <div><label>left_pct</label><input type="number" id="gateLeft" step="0.1" min="0" max="100" /></div>
+        <div><label>top_pct</label><input type="number" id="gateTop" step="0.1" min="0" max="100" /></div>
+      </div>
+      <div class="me-row">
+        <div><label>gate width (%)</label><input type="number" id="gateW" step="0.1" min="0.1" max="100" placeholder="可留空按字宽自动"/></div>
+        <div><label>gate height (%)</label><input type="number" id="gateH" step="0.1" min="0.1" max="100" placeholder="可留空按字高自动"/></div>
+      </div>
+
+      <h2 style="margin-top:16px">楼块 Blocks</h2>
+      <div class="me-btns">
+        <button type="button" class="me-btn primary" id="addBlock">＋ 添加楼块</button>
+      </div>
+      <div id="blockList"></div>
+
+      <h2 style="margin-top:16px">道路 Roads（灰色线）</h2>
+      <div class="me-btns">
+        <button type="button" class="me-btn primary" id="addRoad">＋ 添加道路</button>
+      </div>
+      <div id="roadList"></div>
+
+      <h2 style="margin-top:16px">保存</h2>
+      <div class="me-btns">
+        <button type="button" class="me-btn primary" id="btnSave">保存到服务器</button>
+        <button type="button" class="me-btn" id="btnReload">重新加载</button>
+        <button type="button" class="me-btn" id="btnDownload">下载 JSON 备份</button>
+      </div>
+      <div id="saveLog" class="me-log"></div>
+    </div>
+
+    <div class="me-map-wrap">
+      <p class="me-small" style="margin:0 0 8px">在地图上点击 — 坐标为相对整张校园图的百分比 (0–100)。</p>
+      <svg id="editorSvg" class="me-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 600">
+        <defs>
+          <marker id="edArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#ea580c"/>
+          </marker>
+        </defs>
+        <image id="editorRaster" href="images/campus.png" xlink:href="images/campus.png" x="0" y="0" width="1000" height="600" preserveAspectRatio="xMidYMid meet" />
+        <rect id="editorHitRect" x="0" y="0" width="1000" height="600" fill="transparent" stroke="none"/>
+        <g id="editorPillLayer" style="pointer-events:none"></g>
+        <g id="editorHandlesLayer" style="pointer-events:all"></g>
+        <g id="editorRoadsLayer" style="pointer-events:none"></g>
+        <g id="editorRoutePreview" style="pointer-events:none"></g>
+        <g id="editorDotsLayer" style="pointer-events:none"></g>
+      </svg>
+    </div>
+  </div>
+
+  <script src="js/map_editor.js"></script>
+</body>
+</html>

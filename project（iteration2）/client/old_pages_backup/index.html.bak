@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Campus Navigation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">学校园导航</div>
+    <div class="user-area">
+      <span id="userDisplay"></span>
+      <button id="logoutBtn" class="btn btn-ghost" style="display:none">退出</button>
+    </div>
+  </header>
+  <div id="loadStatus" style="padding:8px 20px;font-size:13px;color:#374151;background:linear-gradient(90deg,#ffffff00,#ffffff00)"></div>
+
+  <!-- Login modal (local simulated login) -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h2>登录</h2>
+      <p>请先登录以查看教室与座位信息</p>
+      <form id="loginForm">
+        <label>用户名
+          <input id="loginUsername" type="text" placeholder="输入学号或姓名" required />
+        </label>
+        <label>密码
+          <input id="password" type="password" placeholder="密码（只是演示）" />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">登录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main app content; hidden until login -->
+  <main class="app-content" id="appContent">
+    <div class="container">
+      <aside class="sidebar card">
+        <h3>房间信息</h3>
+        <div id="details">点击地图中的教室以查看详细信息。</div>
+
+        <div id="campusControls" class="campus-controls">
+          <label for="levelSelect">楼层</label>
+          <select id="levelSelect"></select>
+
+          <label for="buildingSelect" style="margin-top:8px">建筑</label>
+          <select id="buildingSelect"></select>
+
+          <div id="roomList" style="margin-top:8px"></div>
+        </div>
+
+        <div class="search">
+          <h4>搜索</h4>
+          <label for="searchInput" class="sr-only">搜索教室</label>
+          <input id="searchInput" placeholder="搜索教室名..." />
+          <div id="searchResults"></div>
+        </div>
+      </aside>
+
+      <section class="map-area card">
+        <svg id="campusMap" width="720" height="480" viewBox="0 0 720 480">
+          <!-- SVG content will be rendered dynamically by js/map.js -->
+        </svg>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">© 2026 校园导航示例</footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
