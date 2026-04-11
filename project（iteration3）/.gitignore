@@ -1,0 +1,20 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Logs / runtime
+project/server/server.log
+project/server/server.pid
+project/server/*.log
+project/server/*.pid
+
+# Dependencies
+project/server/node_modules/
+
+# SQLite DB (keep if you want to commit demo DB; otherwise ignore)
+project/server/database/*.db
+project/server/database/*.db-journal
+
+node_modules/
+server/database/campus.db
+

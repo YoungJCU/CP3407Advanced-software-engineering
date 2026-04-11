@@ -1,0 +1,88 @@
+{
+  "levels": [
+    {
+      "id": "level-1",
+      "name": "Level 1 (Ground Floor)",
+      "building": "JCU Singapore — Main Campus",
+      "description": "Communal areas, library, student hub, and large-capacity spaces.",
+      "rooms": [
+        { "id": 4, "name": "Auditorium 1" },
+        { "id": 5, "name": "Auditorium 2" },
+        { "id": 6, "name": "Student Hub" },
+        { "id": 7, "name": "Library (Level 1 section)" },
+        { "id": 8, "name": "Cafeteria" },
+        { "id": 9, "name": "Administration Office" },
+        { "id": 10, "name": "Reception Area" },
+        { "id": 11, "name": "Discussion Room 1" },
+        { "id": 12, "name": "Discussion Room 2" }
+      ]
+    },
+    {
+      "id": "level-2",
+      "name": "Level 2",
+      "building": "JCU Singapore — Main Campus",
+      "description": "Teaching spaces, computer labs, and collaboration rooms.",
+      "rooms": [
+        { "id": 13, "name": "Classroom L2-01" },
+        { "id": 14, "name": "Classroom L2-02" },
+        { "id": 15, "name": "Classroom L2-03" },
+        { "id": 16, "name": "Classroom L2-04" },
+        { "id": 43, "name": "Classroom L2-05" },
+        { "id": 44, "name": "Classroom L2-06" },
+        { "id": 45, "name": "Classroom L2-07" },
+        { "id": 46, "name": "Classroom L2-08" },
+        { "id": 47, "name": "Classroom L2-09" },
+        { "id": 17, "name": "Computer Lab 1" },
+        { "id": 18, "name": "Computer Lab 2" },
+        { "id": 19, "name": "Financial Lab" },
+        { "id": 20, "name": "Collaboration Room 1" },
+        { "id": 21, "name": "Collaboration Room 2" }
+      ]
+    },
+    {
+      "id": "level-3",
+      "name": "Level 3",
+      "building": "JCU Singapore — Main Campus",
+      "description": "Primary teaching floor — classrooms and lecture rooms.",
+      "rooms": [
+        { "id": 22, "name": "Classroom L3-01" },
+        { "id": 23, "name": "Classroom L3-02" },
+        { "id": 24, "name": "Classroom L3-03" },
+        { "id": 25, "name": "Classroom L3-04" },
+        { "id": 26, "name": "Classroom L3-05" },
+        { "id": 27, "name": "Lecture Room L3-A" },
+        { "id": 28, "name": "Lecture Room L3-B" },
+        { "id": 29, "name": "Study Room 1" },
+        { "id": 30, "name": "Study Room 2" }
+      ]
+    },
+    {
+      "id": "level-4",
+      "name": "Level 4",
+      "building": "JCU Singapore — Main Campus",
+      "description": "Science labs, psychology lab, and specialist teaching rooms.",
+      "rooms": [
+        { "id": 31, "name": "Bioscience Lab" },
+        { "id": 32, "name": "Psychology Lab" },
+        { "id": 33, "name": "Science Teaching Lab" },
+        { "id": 34, "name": "AquaHealth Lab" },
+        { "id": 35, "name": "Classroom L4-01" },
+        { "id": 36, "name": "Classroom L4-02" },
+        { "id": 37, "name": "Classroom L4-03" }
+      ]
+    },
+    {
+      "id": "level-5",
+      "name": "Level 5 (Upper level)",
+      "building": "JCU Singapore — Main Campus",
+      "description": "Research labs, staff offices, and meeting rooms.",
+      "rooms": [
+        { "id": 38, "name": "Research Lab 1" },
+        { "id": 39, "name": "Research Lab 2" },
+        { "id": 40, "name": "Staff Office Area" },
+        { "id": 41, "name": "Meeting Room 1" },
+        { "id": 42, "name": "Meeting Room 2" }
+      ]
+    }
+  ]
+}

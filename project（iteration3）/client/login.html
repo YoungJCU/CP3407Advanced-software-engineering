@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — Campus Navigator</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;margin:0;background:#f8fafc;color:#0f172a}
+    .container{max-width:420px;margin:60px auto;padding:24px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 4px 24px rgba(15,23,42,0.06)}
+    h2{margin:0 0 20px;font-size:1.25rem}
+    label{display:block;margin-top:14px;font-size:14px;color:#334155;font-weight:500}
+    input{width:100%;box-sizing:border-box;padding:10px 12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px}
+    .err{color:#b91c1c;font-size:13px;margin-top:6px;display:none}
+    .err.show{display:block}
+    .btn{margin-top:20px;padding:10px 16px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:15px;width:100%}
+    .btn-secondary{margin-top:10px;background:#f1f5f9;color:#0f172a}
+    a{color:#2563eb;text-decoration:none}
+    .back{margin-top:16px;text-align:center;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sign in</h2>
+    <p style="font-size:13px;color:#64748b;margin:0 0 8px;line-height:1.45">
+      First visit: your email and password are saved in the server database after validation.
+      Next time: the same credentials are checked against the database to sign you in.
+    </p>
+    <label for="username">Email</label>
+    <input id="username" type="email" inputmode="email" autocomplete="username" />
+    <div id="emailErr" class="err">Invalid email.</div>
+
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" />
+    <div id="passErr" class="err">Invalid password.</div>
+
+    <button id="saveBtn" type="button" class="btn">Continue</button>
+    <button id="cancelBtn" type="button" class="btn btn-secondary">Back to map</button>
+    <p class="back"><a href="index.html">← Home</a></p>
+  </div>
+  <script src="js/api_enhanced.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const username = document.getElementById('username');
+      const password = document.getElementById('password');
+      const saveBtn = document.getElementById('saveBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const emailErr = document.getElementById('emailErr');
+      const passErr = document.getElementById('passErr');
+
+      function isValidEmail(s) {
+        const t = String(s || '').trim();
+        if (!t) return false;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t);
+      }
+
+      function isValidPassword(p) {
+        const t = String(p || '');
+        if (t.length <= 8) return false;
+        if (!/[a-zA-Z]/.test(t)) return false;
+        if (!/[0-9]/.test(t)) return false;
+        return true;
+      }
+
+      try {
+        const u = localStorage.getItem('nav_user');
+        if (u) username.value = u;
+      } catch (e) { /* ignore */ }
+
+      saveBtn.addEventListener('click', async () => {
+        emailErr.classList.remove('show');
+        passErr.classList.remove('show');
+
+        const u = username.value && username.value.trim();
+        const p = password.value;
+
+        if (!isValidEmail(u)) {
+          emailErr.classList.add('show');
+          return;
+        }
+        if (!isValidPassword(p)) {
+          passErr.classList.add('show');
+          return;
+        }
+
+        try {
+          if (window.loginUser && window.registerUser) {
+            let profile;
+            try {
+              profile = await window.loginUser(u, p);
+            } catch (loginErr) {
+              if (loginErr && loginErr.status === 401) {
+                try {
+                  profile = await window.registerUser(u, p);
+                } catch (regErr) {
+                  if (regErr && regErr.status === 409) {
+                    passErr.textContent =
+                      'This email is already registered. If that is your account, check your password.';
+                  } else {
+                    passErr.textContent = regErr && regErr.message ? regErr.message : 'Could not create account.';
+                  }
+                  passErr.classList.add('show');
+                  return;
+                }
+              } else {
+                passErr.textContent = loginErr && loginErr.message ? loginErr.message : 'Sign in failed.';
+                passErr.classList.add('show');
+                return;
+              }
+            }
+            localStorage.setItem('nav_user', profile.email || u);
+            localStorage.setItem('nav_user_name', profile.displayName || '');
+            localStorage.setItem('nav_user_role', profile.role || 'student');
+          } else {
+            localStorage.setItem('nav_user', u);
+            localStorage.setItem('nav_user_name', '');
+            localStorage.setItem('nav_user_role', 'student');
+          }
+        } catch (e) {
+          passErr.textContent = 'Sign in failed: ' + (e && e.message ? e.message : 'Unknown error');
+          passErr.classList.add('show');
+          return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        window.location.href = params.get('return') || 'index.html';
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>

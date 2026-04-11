@@ -1,0 +1,4 @@
+Block map editor: GET | PUT | POST /api/block-map → /Users/chongyuang/CP3407PRAC/web（svg） 2/project/client/data/block_map.json
+Server running on port 3001
+Connected to SQLite database at /Users/chongyuang/CP3407PRAC/web（svg） 2/project/server/database/campus.db
+Campus classrooms and courses loaded.

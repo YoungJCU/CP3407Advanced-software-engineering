@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420">
+  <style>
+    .tbl { fill:#f7f9fc; stroke:#2b6cb0; stroke-width:2 }
+    .title { font: bold 14px sans-serif; fill:#2b6cb0 }
+    .col { font: 12px monospace; fill:#222 }
+    .fk { stroke:#a0aec0; stroke-width:2; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#718096" />
+    </marker>
+  </defs>
+
+  <!-- classrooms -->
+  <rect class="tbl" x="40" y="20" width="240" height="120" rx="6"/>
+  <text class="title" x="60" y="44">classrooms</text>
+  <text class="col" x="60" y="64">id : INTEGER PK</text>
+  <text class="col" x="60" y="82">name : TEXT</text>
+  <text class="col" x="60" y="100">building : TEXT</text>
+  <text class="col" x="60" y="118">floor, totalSeats, availableSeats</text>
+
+  <!-- courses -->
+  <rect class="tbl" x="380" y="20" width="260" height="160" rx="6"/>
+  <text class="title" x="400" y="44">courses</text>
+  <text class="col" x="400" y="64">id : INTEGER PK</text>
+  <text class="col" x="400" y="82">classroomId : INTEGER FK → classrooms(id)</text>
+  <text class="col" x="400" y="100">courseName, startTime, endTime</text>
+  <text class="col" x="400" y="118">dayOfWeek, courseCode, trimester, sessionType</text>
+
+  <!-- hotspots -->
+  <rect class="tbl" x="40" y="170" width="240" height="100" rx="6"/>
+  <text class="title" x="60" y="194">hotspots</text>
+  <text class="col" x="60" y="214">id : INTEGER PK</text>
+  <text class="col" x="60" y="234">name : TEXT NOT NULL</text>
+  <text class="col" x="60" y="254">left_pct : REAL, top_pct : REAL</text>
+
+  <!-- mappings -->
+  <rect class="tbl" x="380" y="200" width="260" height="100" rx="6"/>
+  <text class="title" x="400" y="224">mappings</text>
+  <text class="col" x="400" y="244">id : INTEGER PK</text>
+  <text class="col" x="400" y="264">name_key : TEXT UNIQUE</text>
+  <text class="col" x="400" y="284">classroom_id : INTEGER → classrooms(id)</text>
+
+  <!-- users -->
+  <rect class="tbl" x="720" y="40" width="240" height="120" rx="6"/>
+  <text class="title" x="740" y="64">users</text>
+  <text class="col" x="740" y="84">id : INTEGER PK</text>
+  <text class="col" x="740" y="102">email : TEXT UNIQUE</text>
+  <text class="col" x="740" y="120">displayName, role, password</text>
+
+  <!-- relationships (arrows) -->
+  <line class="fk" x1="320" y1="50" x2="380" y2="70" />
+  <line class="fk" x1="320" y1="120" x2="380" y2="220" />
+  <line class="fk" x1="640" y1="240" x2="720" y2="100" />
+
+  <!-- labels for arrows -->
+  <text class="col" x="300" y="42">1</text>
+  <text class="col" x="300" y="112">many</text>
+
+</svg>
